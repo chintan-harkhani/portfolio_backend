@@ -26,7 +26,7 @@ export class WorkController {
 
 
   @Put(':num')
-  @UseInterceptors(FileInterceptor('image'))
+   @UseInterceptors(FileInterceptor('image', multerConfig1))
   update(
     @Param('num') num: string,
     @Body() updateWorkDto: CreateWorkDto,

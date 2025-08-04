@@ -9,10 +9,12 @@ export class MailService {
 
     constructor(private readonly configService: ConfigService) {
         this.transporter = nodemailer.createTransport({
-            service: 'gmail', // using Gmail service
+            host: process.env.SMTP_HOST,      // e.g., 'smtp.gmail.com'
+            port: Number(process.env.SMTP_PORT),  // usually 587 or 465
+            secure: process.env.SMTP_SECURE === 'true', // true for 465, false for others
             auth: {
-                user: this.configService.get<string>('EMAIL_USER'),
-                pass: this.configService.get<string>('EMAIL_PASS'),
+                user: process.env.SMTP_USER,    // your SMTP username/email
+                pass: process.env.SMTP_PASS,    // your SMTP password
             },
         });
     }
@@ -28,11 +30,13 @@ export class MailService {
         try {
 
             const { FirstName, LastName, email, phone, service, message } = contactData;
+            console.log(email);
+
 
             const mailOptions = {
-                from: email,
-                to: `"mail" <${this.configService.get('EMAIL_USER')}>`,
-                subject: 'new user contact',
+                from:email,
+                to:  `"YourAppName" <${this.configService.get('SMTP_USER')}>`,
+                subject: 'Test Email',
                 html: `
             <h3>New Contact Message</h3>
             <p><strong>Name:</strong> ${FirstName} ${LastName}</p>
@@ -43,6 +47,10 @@ export class MailService {
             <p>${message}</p>
           `,
             };
+
+            console.log(mailOptions);
+
+
 
             return this.transporter.sendMail(mailOptions);
         } catch (error) {
