@@ -4,7 +4,7 @@ import { UpdateContactDto } from './dto/update-contact.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Contact, ContactDocument } from './contact.schema';
 import { Model } from 'mongoose';
-import { MailService } from 'src/mailsender/mail.service';
+import { MailService } from '../mailsender/mail.service';
 
 @Injectable()
 export class ContactService {

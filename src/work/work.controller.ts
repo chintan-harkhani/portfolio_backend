@@ -3,7 +3,7 @@ import { WorkService } from './work.service';
 import { CreateWorkDto } from './dto/create-work.dto';
 import { UpdateWorkDto } from './dto/update-work.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerConfig, multerConfig1 } from 'src/common/config/multer.config';
+import { multerConfig, multerConfig1 } from '../common/config/multer.config';
 
 @Controller('work')
 export class WorkController {

@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, Upl
 import { SkillsService } from './skills.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { multerConfig } from 'src/common/config/multer.config';
+import { multerConfig } from '../common/config/multer.config';
 
 @Controller('skills')
 export class SkillsController {

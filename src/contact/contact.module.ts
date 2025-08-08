@@ -3,7 +3,7 @@ import { ContactService } from './contact.service';
 import { ContactController } from './contact.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Contact, ContactSchema } from './contact.schema';
-import { MailModule } from 'src/mailsender/mail.module';
+import { MailModule } from '../mailsender/mail.module';
 
 @Module({
   imports: [
