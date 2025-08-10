@@ -3,6 +3,7 @@ import { SkillsService } from './skills.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../common/config/multer.config';
+import { UpdateSkillDto } from './dto/update-skill.dto';
 
 @Controller('skills')
 export class SkillsController {
@@ -21,6 +22,17 @@ export class SkillsController {
   async getAllSkills() {
     return this.skillsService.findAll();
   }
+
+  @Patch(':id')
+@UseInterceptors(FileInterceptor('icon', multerConfig))
+async updateSkill(
+  @Param('id') id: string,
+  @UploadedFile() file: Express.Multer.File,
+  @Body() updateSkillDto: UpdateSkillDto,
+) {
+  const iconFilename = file ? file.filename : undefined;
+  return this.skillsService.update(id, updateSkillDto.skillName, iconFilename);
+}
 
   
 }
