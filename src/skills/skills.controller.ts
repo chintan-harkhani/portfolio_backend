@@ -4,18 +4,24 @@ import { CreateSkillDto } from './dto/create-skill.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from '../common/config/multer.config';
 import { UpdateSkillDto } from './dto/update-skill.dto';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Controller('skills')
 export class SkillsController {
-  constructor(private readonly skillsService: SkillsService) {}
+  constructor(
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly skillsService: SkillsService
+  ) {}
 
   @Post('upload')
-  @UseInterceptors(FileInterceptor('icon', multerConfig))
+  // @UseInterceptors(FileInterceptor('icon', multerConfig))
+   @UseInterceptors(FileInterceptor('icon'))
   async uploadSkill(
     @UploadedFile() file: Express.Multer.File,
     @Body() createSkillDto: CreateSkillDto,
   ) {
-    return this.skillsService.create(createSkillDto.skillName, file.filename);
+     const result = await this.cloudinaryService.uploadImageToSkillsFolder(file);
+    return this.skillsService.create(createSkillDto.skillName, result.secure_url);
   }
 
    @Get()
@@ -23,15 +29,23 @@ export class SkillsController {
     return this.skillsService.findAll();
   }
 
-  @Patch(':id')
-@UseInterceptors(FileInterceptor('icon', multerConfig))
+@Patch(':id')
+@UseInterceptors(FileInterceptor('icon')) // multerConfig uses memoryStorage
 async updateSkill(
   @Param('id') id: string,
   @UploadedFile() file: Express.Multer.File,
   @Body() updateSkillDto: UpdateSkillDto,
 ) {
-  const iconFilename = file ? file.filename : undefined;
-  return this.skillsService.update(id, updateSkillDto.skillName, iconFilename);
+  let iconUrl: string | undefined = undefined;
+
+  if (file) {
+    // Upload new image buffer to Cloudinary
+    const uploadResult = await this.cloudinaryService.uploadImageToSkillsFolder(file);
+    iconUrl = uploadResult.secure_url;
+  }
+
+  // Pass the updated skillName and the possibly new iconUrl to the service
+  return this.skillsService.update(id, updateSkillDto.skillName, iconUrl);
 }
 
   

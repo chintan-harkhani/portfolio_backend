@@ -22,8 +22,8 @@ private getBaseUrl(): string {
   return url;
 }
 
-  async create(skillName: string, iconFilename: string): Promise<Skill> {
-    const iconUrl = `${this.getBaseUrl()}/uploads/${iconFilename}`;
+  async create(skillName: string, iconUrl : string): Promise<Skill> {
+    // const iconUrl = `${this.getBaseUrl()}/uploads/${iconFilename}`;
     const newSkill = new this.skillModel({ skillName, iconUrl });
     return newSkill.save();
   }
@@ -42,9 +42,9 @@ private getBaseUrl(): string {
       skill.skillName = skillName;
     }
 
-    if (iconFilename) {
-      skill.iconUrl = `${this.getBaseUrl()}/uploads/${iconFilename}`;
-    }
+    // if (iconFilename) {
+    //   skill.iconUrl = `${this.getBaseUrl()}/uploads/${iconFilename}`;
+    // }
 
     return skill.save();
   }

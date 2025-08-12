@@ -4,17 +4,23 @@ import { CreateWorkDto } from './dto/create-work.dto';
 import { UpdateWorkDto } from './dto/update-work.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig, multerConfig1 } from '../common/config/multer.config';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Controller('work')
 export class WorkController {
-  constructor(private readonly workService: WorkService) { }
+  constructor(
+    private readonly workService: WorkService,
+     private readonly cloudinaryService: CloudinaryService,
+  ) { }
 
   @Post()
-  @UseInterceptors(FileInterceptor('image', multerConfig1))
+  // @UseInterceptors(FileInterceptor('image', multerConfig1))
+   @UseInterceptors(FileInterceptor('image'))
   async uploadwork(
     @UploadedFile() file: Express.Multer.File,
     @Body() createWorkDto: CreateWorkDto,
   ) {
+    const result = await this.cloudinaryService.uploadImageToWorkFolder(file);
     return this.workService.create(createWorkDto, file.filename);
   }
 
@@ -26,14 +32,23 @@ export class WorkController {
 
 
   @Put(':num')
-   @UseInterceptors(FileInterceptor('image', multerConfig1))
-  update(
+  @UseInterceptors(FileInterceptor('image')) // using memoryStorage multer config is recommended
+  async update(
     @Param('num') num: string,
     @Body() updateWorkDto: CreateWorkDto,
     @UploadedFile() file?: Express.Multer.File,
   ) {
-    const filename = file?.filename;
-    return this.workService.update(num, updateWorkDto, filename);
+    let iconUrl: string | undefined = undefined;
+
+    if (file) {
+      // Upload to Cloudinary inside 'work' folder or 'skills' folder as per your structure
+      // Use existing service method or create a new one for 'work' folder upload
+      const uploadResult = await this.cloudinaryService.uploadImageToWorkFolder(file);
+      iconUrl = uploadResult.secure_url;
+    }
+
+    // Pass iconUrl (Cloudinary URL) + body DTO to the service to update your entity
+    return this.workService.update(num, updateWorkDto, iconUrl);
   }
 
 }
