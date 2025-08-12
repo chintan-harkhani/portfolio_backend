@@ -32,7 +32,7 @@ private getBaseUrl(): string {
     return this.skillModel.find().exec();
   }
 
-  async update(id: string, skillName?: string, iconFilename?: string): Promise<Skill> {
+  async update(id: string, skillName?: string, iconUrl?: string): Promise<Skill> {
     const skill = await this.skillModel.findById(id);
     if (!skill) {
       throw new Error('Skill not found');
@@ -42,10 +42,9 @@ private getBaseUrl(): string {
       skill.skillName = skillName;
     }
 
-    // if (iconFilename) {
-    //   skill.iconUrl = `${this.getBaseUrl()}/uploads/${iconFilename}`;
-    // }
-
+    if (iconUrl !== undefined) {
+    skill.iconUrl = iconUrl; // Expect full URL, e.g., Cloudinary URL
+  }
     return skill.save();
   }
 }

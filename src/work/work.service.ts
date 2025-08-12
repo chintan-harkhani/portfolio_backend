@@ -10,8 +10,8 @@ export class WorkService {
   constructor(
     @InjectModel(Work.name) private WorkModel: Model<WorkDocument>,
   ) { }
-  async create(createWorkDto: CreateWorkDto, imageFilename: string): Promise<Work> {
-    const iconUrl = `http://localhost:3001/uploads/work/${imageFilename}`;
+  async create(createWorkDto: CreateWorkDto, iconUrl: string): Promise<Work> {
+    // const iconUrl = `http://localhost:3001/uploads/work/${imageFilename}`;
     let stackArray: string[];
 
     if (typeof createWorkDto.stack === 'string') {
@@ -44,7 +44,7 @@ export class WorkService {
     return this.WorkModel.find().exec();
   }
 
-  async update(num: string, updateWorkDto: CreateWorkDto, imageFilename?: string): Promise<Work> {
+  async update(num: string, updateWorkDto: CreateWorkDto, iconUrl?: string): Promise<Work> {
     // Parse stack if it's a JSON string
     let stackArray: string[] = [];
     if (typeof updateWorkDto.stack === 'string') {
@@ -58,9 +58,9 @@ export class WorkService {
     }
 
     // If image is provided, build the new image URL
-    const imageUrl = imageFilename
-      ? `http://localhost:3001/uploads/work/${imageFilename}`
-      : updateWorkDto.image;
+    // const imageUrl = imageFilename
+    //   ? `http://localhost:3001/uploads/work/${imageFilename}`
+    //   : updateWorkDto.image;
 
     // Update based on a custom field (e.g., num = customId)
     const updatedWork = await this.WorkModel.findOneAndUpdate(
@@ -70,7 +70,7 @@ export class WorkService {
         desc: updateWorkDto.desc,
         link: updateWorkDto.image, // Corrected this field (was image)
         stack: stackArray,
-        image: imageUrl,
+        image: iconUrl,
       },
       { new: true }
     );
